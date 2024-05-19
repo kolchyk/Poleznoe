@@ -92,7 +92,7 @@ def summarize_text(text):
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": f"Please detail  summarize the following meeting transcription:\n\n{text}\n\n. Answer in ukrainian. Summary:"},
+            {"role": "user", "content": f"Please  summarize the following meeting transcription:\n\n{text}\n\n. Answer in ukrainian. Summary:"},
         ],
 
         max_tokens=4000,
@@ -102,6 +102,10 @@ def summarize_text(text):
     summary = response.choices[0].message.content
     return summary
 
+def save_summary_to_file(summary, file_name):
+    with open(file_name, 'w', encoding='utf-8') as file:
+        file.write(summary)
+        
 def main(file_path):
     # Шаг 1: Чтение текстового файла
     full_text = read_text_file(file_path)
@@ -115,6 +119,7 @@ def main(file_path):
     # Шаг 4: Объединение всех саммари
     final_summary = "\n\n".join(all_summaries)
     
+    save_summary_to_file(final_summary, 'final_summary.txt')
     # Вывод итогового саммари
     print("Final Summary:")
     print(final_summary)
@@ -123,20 +128,3 @@ def main(file_path):
 file_path = "D:/meeting/full_transcription.txt"
 main(file_path)   
    
-   
-   
-response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"Please summarize the following meeting transcription in bullet points:\n\n{full_transcription}\n\nSummary:"},
-    ],
-    max_tokens=4000,
-    n=1,
-    stop=["\n"]
-)
-
-# Extract and print the summary from the response
-summary = response['choices'][0]['message']['content']
-print(summary)
-
